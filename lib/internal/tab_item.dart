@@ -11,12 +11,13 @@ const int ANIM_DURATION = 300;
 class TabItem extends StatelessWidget {
   TabItem(
       {@required this.uniqueKey,
-        @required this.selected,
-        @required this.iconData,
-        @required this.title,
-        @required this.callbackFunction,
-        @required this.textColor,
-        @required this.iconColor});
+      @required this.selected,
+      @required this.iconData,
+      @required this.title,
+      @required this.callbackFunction,
+      @required this.textColor,
+      @required this.iconColor,
+      this.badge});
 
   final UniqueKey uniqueKey;
   final String title;
@@ -29,6 +30,7 @@ class TabItem extends StatelessWidget {
   final double iconYAlign = ICON_ON;
   final double textYAlign = TEXT_OFF;
   final double iconAlpha = ALPHA_ON;
+  final int badge;
 
   @override
   Widget build(BuildContext context) {
@@ -63,18 +65,46 @@ class TabItem extends StatelessWidget {
               child: AnimatedOpacity(
                 duration: Duration(milliseconds: ANIM_DURATION),
                 opacity: (selected) ? ALPHA_OFF : ALPHA_ON,
-                child: IconButton(
-                  highlightColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  padding: EdgeInsets.all(0),
-                  alignment: Alignment(0, 0),
-                  icon: Icon(
-                    iconData,
-                    color: iconColor,
-                  ),
-                  onPressed: () {
-                    callbackFunction(uniqueKey);
-                  },
+                child: new Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: <Widget>[
+                    IconButton(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      padding: EdgeInsets.all(0),
+                      alignment: Alignment(0, 0),
+                      icon: Icon(
+                        iconData,
+                        color: iconColor,
+                      ),
+                      onPressed: () {
+                        callbackFunction(uniqueKey);
+                      },
+                    ),
+                    badge>0? new Positioned(
+                      right: 5,
+                      top: 5,
+                      child: new Container(
+                        padding: EdgeInsets.all(2),
+                        decoration: new BoxDecoration(
+                          color: iconColor,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        constraints: BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                        ),
+                        child: Text(
+                          badge.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ): new Container(),
+                  ],
                 ),
               ),
             ),

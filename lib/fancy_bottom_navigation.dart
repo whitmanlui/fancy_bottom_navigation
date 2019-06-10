@@ -46,7 +46,8 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
     with TickerProviderStateMixin, RouteAware {
   IconData nextIcon = Icons.search;
   IconData activeIcon = Icons.search;
-
+  int nextBadge = 0;
+  int activeBadge = 0;
   int currentSelected = 0;
   double _circleAlignX = 0;
   double _circleIconAlpha = 1;
@@ -62,6 +63,7 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
     super.didChangeDependencies();
 
     activeIcon = widget.tabs[currentSelected].iconData;
+    activeBadge = widget.tabs[currentSelected].badge;
 
     circleColor = (widget.circleColor == null)
         ? (Theme.of(context).brightness == Brightness.dark)
@@ -106,6 +108,7 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
         currentSelected = selected;
         _circleAlignX = -1 + (2 / (widget.tabs.length - 1) * selected);
         nextIcon = widget.tabs[selected].iconData;
+        nextBadge = widget.tabs[selected].badge;
       });
     }
   }
@@ -139,8 +142,10 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
                       widget.onTabChangedListener(selected);
                       _setSelected(uniqueKey);
                       _initAnimationAndStart(_circleAlignX, 1);
-                    }))
-                .toList(),
+                    },
+                    badge: t.badge,
+                  )
+                ).toList(),
           ),
         ),
         Positioned.fill(
@@ -200,9 +205,40 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
                                 duration:
                                     Duration(milliseconds: ANIM_DURATION ~/ 5),
                                 opacity: _circleIconAlpha,
-                                child: Icon(
-                                  activeIcon,
-                                  color: activeIconColor,
+                                child: new Stack(
+                                  alignment: Alignment.bottomCenter,
+                                  children: <Widget>[
+                                    new Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        new Icon(activeIcon, color: activeIconColor),
+                                      ],
+                                    ),
+                                    activeBadge>0?new Positioned(
+                                      right: 10,
+                                      top: 10,
+                                      child: new Container(
+                                        padding: EdgeInsets.all(2),
+                                        decoration: new BoxDecoration(
+                                          color: activeIconColor,
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        constraints: BoxConstraints(
+                                          minWidth: 14,
+                                          minHeight: 14,
+                                        ),
+                                        child: Text(
+                                          activeBadge.toString(),
+                                          style: TextStyle(
+                                            color: circleColor,
+                                            fontSize: 8,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ):new Container(),
+                                  ],
                                 ),
                               ),
                             ),
@@ -226,6 +262,7 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
     Future.delayed(Duration(milliseconds: ANIM_DURATION ~/ 5), () {
       setState(() {
         activeIcon = nextIcon;
+        activeBadge = nextBadge;
       });
     }).then((_) {
       Future.delayed(Duration(milliseconds: (ANIM_DURATION ~/ 5 * 3)), () {
@@ -248,10 +285,11 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
 }
 
 class TabData {
-  TabData({@required this.iconData, @required this.title, this.onclick});
+  TabData({@required this.iconData, @required this.title, this.onclick, @required this.badge});
 
   IconData iconData;
   String title;
   Function onclick;
+  int badge;
   final UniqueKey key = UniqueKey();
 }

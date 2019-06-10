@@ -40,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       bottomNavigationBar: FancyBottomNavigation(
+        textColor: Colors.white,
         tabs: [
           TabData(
               iconData: Icons.home,
@@ -48,13 +49,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 final FancyBottomNavigationState fState =
                     bottomNavigationKey.currentState;
                 fState.setPage(2);
-              }),
+              },
+              badge: 0),
           TabData(
               iconData: Icons.search,
               title: "Search",
               onclick: () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => SecondPage()))),
-          TabData(iconData: Icons.shopping_cart, title: "Basket")
+                  .push(MaterialPageRoute(builder: (context) => SecondPage())),badge: 2),
+          TabData(iconData: Icons.shopping_cart, title: "Basket",badge: 3)
         ],
         initialSelection: 1,
         key: bottomNavigationKey,

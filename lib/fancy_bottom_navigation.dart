@@ -282,6 +282,12 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
       currentSelected = page;
     });
   }
+
+  void setBadge(int badge) {
+    setState(() {
+      activeBadge = badge;
+    });
+  }
 }
 
 class TabData {
